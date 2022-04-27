@@ -1,0 +1,1 @@
+gcc pipex.c utilities/print_error.c libft/libft.a -o test
