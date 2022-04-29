@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/27 13:45:02 by epilar            #+#    #+#             */
-/*   Updated: 2022/04/28 15:36:29 by epilar           ###   ########.fr       */
+/*   Updated: 2022/04/29 09:50:57 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,5 @@ void	print_error(char *msg)
 	}
 	else
 		perror(msg);
+	exit(1);
 }
