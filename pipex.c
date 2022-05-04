@@ -6,37 +6,41 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 14:21:33 by epilar            #+#    #+#             */
-/*   Updated: 2022/04/29 11:30:11 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 13:48:40 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-// void	do_pipe(t_pipex *pipex, char **av, char **env)
-// {
-// 	char	**path_arr;
-// 	char	**paths;
-// 	char	**args;
-// 	char	**bin_paths;
-
-// 	path_arr = get_paths_arr(env);
-// 	if (!paths)
-// 	{
-// 		close(pipex->infile);
-// 		close(pipex->outfile);
-// 		print_error(PATH_ERR);
-// 		exit(1);
-// 	}
-// }
+void	close_pipe(int	*pipe)
+{
+	close(pipe[0]);
+	close(pipe[1]);
+}
 
 void	clear_pipex(t_pipex *pipex)
 {
+	int	i;
+
 	close(pipex->infile);
 	close(pipex->outfile);
-	close(pipex->pipe_fds[0]);
-	close(pipex->pipe_fds[1]);
-	// if (pipex->cmd_paths)
-	// 	free(pipex->cmd_paths)...
+	close_pipe(pipex->pipe_fds);
+	if (pipex->cmd_paths)
+	{
+		i = 0;
+		while(pipex->cmd_paths[i])
+			free(pipex->cmd_paths[i++]);
+		free(pipex->cmd_paths);
+	}
+	if (pipex->cmd_args)
+	{
+		i = 0;
+		while(pipex->cmd_args[i])
+			free(pipex->cmd_args[i++]);
+		free(pipex->cmd_args);
+	}
+	if (pipex->cmd_place)
+		free(pipex->cmd_place);
 }
 
 void	check_arguments(int ac, char **av, char **env)
@@ -47,22 +51,47 @@ void	check_arguments(int ac, char **av, char **env)
 		print_error(WRONG_ARGS);
 }
 
-void	open_inoutfiles(t_pipex *pipex, int ac, char **av)
-{
-	pipex->infile = open_inputfile(av[1]);
-	if (pipex->infile < 0)
-		print_error(OPEN_INFILE);
-	pipex->outfile = create_outputfile(av[ac - 1]);
-	if (pipex->outfile < 0)
-	{
-		close(pipex->infile);
-		print_error(CREAT_OUTFILE);
-	}
-}
-
 void	prepare_struct(t_pipex *pipex)
 {
 	pipex->cmd_paths = NULL;
+	pipex->cmd_place = NULL;
+	pipex->cmd_args = NULL;
+}
+
+void	wait4process(t_pipex *pipex)
+{
+	if (waitpid(pipex->pid1, NULL, 0) < 0)
+	{
+		clear_pipex(pipex);
+		print_error(WAIT_FAIL);
+	}
+	if (waitpid(pipex->pid2, NULL, 0) < 0)
+	{
+		clear_pipex(pipex);
+		print_error(WAIT_FAIL);
+	}
+}
+
+void	do_pipe(t_pipex *pipex, char **av, char **env)
+{	
+	pipex->pid1 = fork();
+	if (pipex->pid1 < 0)
+	{
+		clear_pipex(pipex);
+		print_error(FORK_FAIL);
+	}
+	if (!pipex->pid1)
+		child_proc1(pipex, av, env);
+	pipex->pid2 = fork();
+	if (pipex->pid2 < 0)
+	{
+		clear_pipex(pipex);
+		print_error(FORK_FAIL);
+	}
+	if (!pipex->pid2)
+		child_proc2(pipex, av, env);
+	close_pipe(pipex->pipe_fds);
+	wait4process(pipex);
 }
 
 int	main(int ac, char **av, char **env)
@@ -78,6 +107,12 @@ int	main(int ac, char **av, char **env)
 		print_error(MAKE_TUBE);
 	}
 	pipex.cmd_paths = get_paths_arr(env);
-	// do_pipe(&pipex, av, env);
+	if (!pipex.cmd_paths)
+	{
+		clear_pipex(&pipex);
+		print_error(NO_PATHS);
+	}
+	do_pipe(&pipex, av, env);
+	clear_pipex(&pipex);
 	return (0);
 }

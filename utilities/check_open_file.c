@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/28 12:43:38 by epilar            #+#    #+#             */
-/*   Updated: 2022/04/28 12:43:59 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 10:53:22 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,17 @@ int create_outputfile(char *path)
 	}
 	fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	return fd;
+}
+
+void	open_inoutfiles(t_pipex *pipex, int ac, char **av)
+{
+	pipex->infile = open_inputfile(av[1]);
+	if (pipex->infile < 0)
+		print_error(OPEN_INFILE);
+	pipex->outfile = create_outputfile(av[ac - 1]);
+	if (pipex->outfile < 0)
+	{
+		close(pipex->infile);
+		print_error(CREAT_OUTFILE);
+	}
 }

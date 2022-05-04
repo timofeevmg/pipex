@@ -2,6 +2,7 @@ all:
 	gcc pipex.c utilities/print_error.c \
 				utilities/check_open_file.c \
 				utilities/path_from_env.c \
+				utilities/child_proc.c \
 				libft/libft.a -o test
 
 debug:
