@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_open_file.c                                  :+:      :+:    :+:   */
+/*   check_open.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/28 12:43:38 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 10:53:22 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 14:29:03 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../pipex.h"
+#include "../includes/pipex.h"
 
 int	open_inputfile(char *path)
 {
@@ -25,7 +25,7 @@ int	open_inputfile(char *path)
 	ret = read(fd, buf, 1);
 	if (ret < 0)
 		return ret;
-	return fd;
+	return (fd);
 }
 
 int create_outputfile(char *path)
@@ -41,7 +41,7 @@ int create_outputfile(char *path)
 			return ret;
 	}
 	fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0644);
-	return fd;
+	return (fd);
 }
 
 void	open_inoutfiles(t_pipex *pipex, int ac, char **av)
@@ -55,4 +55,12 @@ void	open_inoutfiles(t_pipex *pipex, int ac, char **av)
 		close(pipex->infile);
 		print_error(CREAT_OUTFILE);
 	}
+}
+
+void	check_arguments(int ac, char **av, char **env)
+{
+	if (ac != 5)
+		print_error(WRONG_ARGS_NUM);
+	if (!av || !env)
+		print_error(WRONG_ARGS);
 }

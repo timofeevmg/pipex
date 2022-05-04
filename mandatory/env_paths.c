@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   path_from_env.c                                    :+:      :+:    :+:   */
+/*   env_paths.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/28 15:10:39 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 09:42:48 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 14:28:51 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../pipex.h"
+#include "../includes/pipex.h"
 
 char	*get_pathstr_from_env(char **env)
 {
@@ -32,5 +32,5 @@ char	**get_paths_arr(char **env)
 	if (!paths_str)
 		return NULL;
 	paths_arr = ft_split(paths_str, ':');
-	return paths_arr;
+	return (paths_arr);
 }

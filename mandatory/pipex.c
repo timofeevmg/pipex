@@ -6,50 +6,11 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 14:21:33 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 13:48:40 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 14:35:08 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-void	close_pipe(int	*pipe)
-{
-	close(pipe[0]);
-	close(pipe[1]);
-}
-
-void	clear_pipex(t_pipex *pipex)
-{
-	int	i;
-
-	close(pipex->infile);
-	close(pipex->outfile);
-	close_pipe(pipex->pipe_fds);
-	if (pipex->cmd_paths)
-	{
-		i = 0;
-		while(pipex->cmd_paths[i])
-			free(pipex->cmd_paths[i++]);
-		free(pipex->cmd_paths);
-	}
-	if (pipex->cmd_args)
-	{
-		i = 0;
-		while(pipex->cmd_args[i])
-			free(pipex->cmd_args[i++]);
-		free(pipex->cmd_args);
-	}
-	if (pipex->cmd_place)
-		free(pipex->cmd_place);
-}
-
-void	check_arguments(int ac, char **av, char **env)
-{
-	if (ac != 5)
-		print_error(WRONG_ARGS_NUM);
-	if (!av || !env)
-		print_error(WRONG_ARGS);
-}
+#include "../includes/pipex.h"
 
 void	prepare_struct(t_pipex *pipex)
 {
@@ -77,7 +38,8 @@ void	do_pipe(t_pipex *pipex, char **av, char **env)
 	pipex->pid1 = fork();
 	if (pipex->pid1 < 0)
 	{
-		clear_pipex(pipex);
+		close_files(pipex);
+		close_pipe(pipex->pipe_fds);
 		print_error(FORK_FAIL);
 	}
 	if (!pipex->pid1)
@@ -85,7 +47,8 @@ void	do_pipe(t_pipex *pipex, char **av, char **env)
 	pipex->pid2 = fork();
 	if (pipex->pid2 < 0)
 	{
-		clear_pipex(pipex);
+		close_files(pipex);
+		close_pipe(pipex->pipe_fds);
 		print_error(FORK_FAIL);
 	}
 	if (!pipex->pid2)
@@ -103,13 +66,14 @@ int	main(int ac, char **av, char **env)
 	open_inoutfiles(&pipex, ac, av);
 	if (pipe(pipex.pipe_fds) < 0)
 	{
-		clear_pipex(&pipex);
+		close_files(&pipex);
 		print_error(MAKE_TUBE);
 	}
 	pipex.cmd_paths = get_paths_arr(env);
 	if (!pipex.cmd_paths)
 	{
-		clear_pipex(&pipex);
+		close_files(&pipex);
+		close_pipe(pipex.pipe_fds);
 		print_error(NO_PATHS);
 	}
 	do_pipe(&pipex, av, env);

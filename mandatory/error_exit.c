@@ -6,11 +6,11 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/27 13:45:02 by epilar            #+#    #+#             */
-/*   Updated: 2022/04/29 09:50:57 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 14:07:26 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../pipex.h"
+#include "../includes/pipex.h"
 
 void	print_error(char *msg)
 {

@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/27 13:30:11 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 13:50:41 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/04 14:16:41 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-# include "libft/libft.h"
+# include "../libft/libft.h"
 
 # define WRONG_ARGS_NUM	"Number of arguments should be 4"
 # define WRONG_ARGS		"Wrong main argument(-s)"
@@ -50,7 +50,8 @@ typedef struct s_pipex
 } t_pipex;
 
 void	print_error(char *msg);
-void	clear_pipex(t_pipex *pipex);
+
+void	check_arguments(int ac, char **av, char **env);
 
 void	open_inoutfiles(t_pipex *pipex, int ac, char **av);
 int		open_inputfile(char *path);
@@ -61,5 +62,9 @@ char	*get_pathstr_from_env(char **env);
 
 void	child_proc1(t_pipex *pipex, char **av, char **env);
 void	child_proc2(t_pipex *pipex, char **av, char **env);
+
+void	clear_pipex(t_pipex *pipex);
+void	close_pipe(int	*pipe);
+void	close_files(t_pipex *pipex);
 
 #endif
