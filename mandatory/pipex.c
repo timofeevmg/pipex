@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 14:21:33 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 14:35:08 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/16 12:55:35 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	prepare_struct(t_pipex *pipex)
 {
+	pipex->opened_fds = NOFDS;
 	pipex->cmd_paths = NULL;
 	pipex->cmd_place = NULL;
 	pipex->cmd_args = NULL;
@@ -22,38 +23,24 @@ void	prepare_struct(t_pipex *pipex)
 void	wait4process(t_pipex *pipex)
 {
 	if (waitpid(pipex->pid1, NULL, 0) < 0)
-	{
-		clear_pipex(pipex);
-		print_error(WAIT_FAIL);
-	}
+		clean_exit(pipex, WAIT_FAIL);
 	if (waitpid(pipex->pid2, NULL, 0) < 0)
-	{
-		clear_pipex(pipex);
-		print_error(WAIT_FAIL);
-	}
+		clean_exit(pipex, WAIT_FAIL);
 }
 
 void	do_pipe(t_pipex *pipex, char **av, char **env)
 {	
 	pipex->pid1 = fork();
 	if (pipex->pid1 < 0)
-	{
-		close_files(pipex);
-		close_pipe(pipex->pipe_fds);
-		print_error(FORK_FAIL);
-	}
+		clean_exit(pipex, FORK_FAIL);
 	if (!pipex->pid1)
 		child_proc1(pipex, av, env);
 	pipex->pid2 = fork();
 	if (pipex->pid2 < 0)
-	{
-		close_files(pipex);
-		close_pipe(pipex->pipe_fds);
-		print_error(FORK_FAIL);
-	}
+		clean_exit(pipex, FORK_FAIL);
 	if (!pipex->pid2)
 		child_proc2(pipex, av, env);
-	close_pipe(pipex->pipe_fds);
+	close_pipe(pipex);
 	wait4process(pipex);
 }
 
@@ -65,18 +52,14 @@ int	main(int ac, char **av, char **env)
 	prepare_struct(&pipex);
 	open_inoutfiles(&pipex, ac, av);
 	if (pipe(pipex.pipe_fds) < 0)
-	{
-		close_files(&pipex);
-		print_error(MAKE_TUBE);
-	}
+		clean_exit(&pipex, MAKE_TUBE);
+	pipex.opened_fds = pipex.opened_fds | PIPE0FD | PIPE1FD;
 	pipex.cmd_paths = get_paths_arr(env);
 	if (!pipex.cmd_paths)
-	{
-		close_files(&pipex);
-		close_pipe(pipex.pipe_fds);
-		print_error(NO_PATHS);
-	}
+		clean_exit(&pipex, NO_PATHS);
 	do_pipe(&pipex, av, env);
-	clear_pipex(&pipex);
+	close_pipe(&pipex);
+	close_files(&pipex);
+	clean_memory(&pipex);
 	return (0);
 }

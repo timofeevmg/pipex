@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/28 15:10:39 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 14:28:51 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/16 12:12:25 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 char	*get_pathstr_from_env(char **env)
 {
-	while(*env)
+	while (*env)
 	{
 		if (ft_strncmp(*env, "PATH=", 5) == 0)
 			return (*env + 5);
 		env++;
 	}
-	return NULL;
+	return (NULL);
 }
 
 char	**get_paths_arr(char **env)
@@ -30,7 +30,7 @@ char	**get_paths_arr(char **env)
 
 	paths_str = get_pathstr_from_env(env);
 	if (!paths_str)
-		return NULL;
+		return (NULL);
 	paths_arr = ft_split(paths_str, ':');
 	return (paths_arr);
 }

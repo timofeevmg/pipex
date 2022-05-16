@@ -1,10 +1,9 @@
 all:
 	gcc mandatory/pipex.c \
-		mandatory/error_exit.c \
 		mandatory/check_open.c \
 		mandatory/env_paths.c \
 		mandatory/child_proc.c \
-		mandatory/clean_close.c \
+		mandatory/clean_close_exit.c \
 		libft/libft.a -o pipex
 
 debug:

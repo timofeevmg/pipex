@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/27 13:30:11 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/04 14:16:41 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/16 12:40:22 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,26 @@
 # define DUP_FAIL		"Attempt to duplicate obj descriptor"
 # define CMD_AV_F		"Attempt to get command arguments"
 # define CMD_PLACE		"Attemp to find command location"
+# define EXE_CMD		"Attemp to execute command"
+
+# define NOFDS		0b00000000
+# define INFD		0b00000001
+# define OUTFD		0b00000010
+# define PIPE0FD	0b00000100
+# define PIPE1FD	0b00001000
 
 typedef struct s_pipex
 {
-	int	infile;
-	int	outfile;
-	int	pipe_fds[2];
+	char	opened_fds;
+	int		infile;
+	int		outfile;
+	int		pipe_fds[2];
 	char	**cmd_paths;
 	pid_t	pid1;
 	pid_t	pid2;
 	char	*cmd_place;
 	char	**cmd_args;
 } t_pipex;
-
-void	print_error(char *msg);
 
 void	check_arguments(int ac, char **av, char **env);
 
@@ -63,8 +69,10 @@ char	*get_pathstr_from_env(char **env);
 void	child_proc1(t_pipex *pipex, char **av, char **env);
 void	child_proc2(t_pipex *pipex, char **av, char **env);
 
-void	clear_pipex(t_pipex *pipex);
-void	close_pipe(int	*pipe);
+void	clean_exit(t_pipex *pipex, char *msg);
+void	clean_memory(t_pipex *pipex);
+void	close_pipe(t_pipex *pipex);
 void	close_files(t_pipex *pipex);
+void	print_error(char *msg);
 
 #endif
