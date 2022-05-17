@@ -19,5 +19,11 @@ input:
 - ./pipex input "ls -l" "wc -l" output\
   < input ls -l | wc -l > output
   
+````
+input:
+libft
+````
+- ./pipex input "cat -e" "cat -e" output\
+  < input cat -e | cat -e > output
 
 echo $?
