@@ -3,14 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: epilar <epilar@student.42.fr>              +#+  +:+       +#+         #
+#    By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/30 10:19:57 by epilar            #+#    #+#              #
-#    Updated: 2021/05/12 14:52:11 by epilar           ###   ########.fr        #
+#    Updated: 2022/05/17 09:09:50 by epilar           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
+
+CC = gcc
 
 SRCS = ft_memset.c\
 	   ft_bzero.c\
@@ -58,28 +60,26 @@ SRC_BONUS = ft_lstnew.c\
 			ft_lstiter.c\
 			ft_lstmap.c
 
+HEADER = libft.h
+
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 OBJ_BONUS = $(patsubst %.c, %.o, $(SRC_BONUS))
 
-D_FILES = $(patsubst %.c,%.d,$(SRCS) $(SRC_BONUS))
-
-FLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@ar rcs $(NAME) $?
 
-%.o : %.c
-	@gcc $(FLAGS) -c $< -o $@ -MD
-
-include $(wildcard $(D_FILES))
+%.o : %.c $(HEADER) Makefile
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 bonus :
 	@make OBJS="$(OBJ_BONUS)" all
 
 clean :
-	@rm -f $(OBJS) $(OBJ_BONUS) $(D_FILES)
+	@rm -f $(OBJS) $(OBJ_BONUS)
 
 fclean : clean
 	@rm -f $(NAME)
