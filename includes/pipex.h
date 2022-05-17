@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/27 13:30:11 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/16 16:56:20 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/17 10:46:11 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_pipex
 	pid_t	pid2;
 	char	*cmd_place;
 	char	**cmd_args;
-} t_pipex;
+}	t_pipex;
 
 void	check_arguments(int ac, char **av, char **env);
 

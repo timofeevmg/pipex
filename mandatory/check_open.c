@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/28 12:43:38 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/16 12:56:39 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/17 12:03:48 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,12 @@ int	open_inputfile(char *path)
 {
 	int		ret;
 	int		fd;
-	char	buf[8];
 
 	ret = access(path, F_OK | R_OK);
 	if (ret < 0)
 		return (ret);
 	fd = open(path, O_RDONLY);
-	ret = read(fd, buf, 1);
+	ret = read(fd, NULL, 0);
 	if (ret < 0)
 		return (ret);
 	return (fd);
