@@ -40,6 +40,8 @@ $(LIBFT):
 		@make clean -C $(LIB_DIR)
 		@echo "$(GREEN)Done.$(DEFAULT)"
 
+bonus:
+	$(CC) $(CFLAGS) bonus/pipex_bonus.c libft/libft.a -o pipex
 
 clean:
 		@echo "$(RED)Cleaning...$(DEFAULT)"
