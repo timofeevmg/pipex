@@ -6,13 +6,41 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/18 14:09:55 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 12:16:55 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
 
-int		check_heredoc(char *arg)
+void	print_error(char *msg)
+{
+	int		len;
+
+	write(STDERR_FILENO, "Error: ", 7);
+	if (errno == 0)
+	{
+		len = ft_strlen(msg);
+		write(STDERR_FILENO, msg, len);
+		write(STDERR_FILENO, "\n", 1);
+	}
+	else
+		perror(msg);
+}
+
+void	clean_exit(t_pipex *pipex, char *msg)
+{
+	print_error(msg);
+	if (pipex->filelst & INFD)
+		close(pipex->infile);
+	if (pipex->filelst & HDFD)
+		unlink(HEREDOC_FILE);
+	if (pipex->filelst & OUTFD)
+		close(pipex->outfile);
+
+	exit(1);
+}
+
+int	check_heredoc(char *arg)
 {
 	if (arg && ft_strncmp("here_doc", arg, 9) == 0)
 		return (1);
@@ -21,11 +49,11 @@ int		check_heredoc(char *arg)
 
 void	prepare_struct(t_pipex *pipex, char **av)
 {
-	pipex->openedfds = NOFDS;
+	pipex->filelst = NOFDS;
 	pipex->isheredoc = check_heredoc(av[1]);
 }
 
-int		count_commands(int ac, t_pipex *pipex)
+int	count_commands(int ac, t_pipex *pipex)
 {
 	if (ac < 5 || (ac < 6 && pipex->isheredoc))
 		return (-1);
@@ -33,12 +61,34 @@ int		count_commands(int ac, t_pipex *pipex)
 	return (0);
 }
 
-void	create_heredoc(char *limiter)
+void	create_heredoc(t_pipex *pipex, char *limiter)
 {
-	
+	int		fd;
+	char	*line;
+
+	fd = open(HEREDOC_FILE, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd < 0)
+		clean_exit(pipex, CREAT_HEREDOC);
+	pipex->filelst |= HDFD;
+	while (1)
+	{
+		write(1, "> ", 2);
+		if (get_next_line(0, &line) < 0)
+		{
+			close(fd);
+			clean_exit(pipex, READ_STDIN);
+		}
+		if (ft_strcmp(limiter, line) == 0)
+			break ;
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+		free(line);
+	}
+	free(line);
+	close(fd);
 }
 
-int		open_inputfile(char **av, t_pipex *pipex)
+int	open_inputfile(char **av, t_pipex *pipex)
 {
 	char	*input;
 	int		ret;
@@ -46,7 +96,7 @@ int		open_inputfile(char **av, t_pipex *pipex)
 
 	if (pipex->isheredoc)
 	{
-		create_heredoc(av[2]);
+		create_heredoc(pipex, av[2]);
 		input = ft_strdup(HEREDOC_FILE);
 	}
 	else
@@ -88,16 +138,11 @@ void	open_inoutfiles(int ac, char **av, t_pipex *pipex)
 {
 	pipex->infile = open_inputfile(av, pipex);
 	if (pipex->infile < 0)
-	{
-		perror(OPEN_INFILE);
-		exit(1);
-	}
+		clean_exit(pipex, OPEN_INFILE);
 	pipex->outfile = create_outputfile(av[ac - 1]);
 	if (pipex->outfile < 0)
-	{
-		perror(CREAT_OUTFILE);
-		exit(1);
-	}
+		clean_exit(pipex, CREAT_OUTFILE);
+	pipex->filelst = NOFDS | INFD | OUTFD;
 }
 
 int	main(int ac, char **av, char **env)
@@ -105,17 +150,10 @@ int	main(int ac, char **av, char **env)
 	t_pipex		pipex;
 
 	if (!av || !env)
-	{
-		perror(WRONG_ARGS);
-		exit(1);
-	}
+		clean_exit(&pipex, WRONG_ARGS);
 	prepare_struct(&pipex, av);
 	if (count_commands(ac, &pipex) < 0)
-	{
-		perror(WRONG_ARGS_NUM);
-		exit(1);
-	}
+		clean_exit(&pipex, WRONG_ARGS_NUM);
 	open_inoutfiles(ac, av, &pipex);
-	printf("%d\n", pipex.cmd_num);
 	return (0);
 }

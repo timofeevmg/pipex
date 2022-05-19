@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/11 15:06:06 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/18 15:05:29 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 09:40:56 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 int		get_next_line(int fd, char **line);
 char	*ft_strchr(const char *str, int c);
-char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strjn(char *s1, char *s2);
 int		ft_strlen(char *str);
 
 #endif

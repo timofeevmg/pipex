@@ -5,3 +5,4 @@ test*
 a.out*
 pipex
 libft/libft.a
+.vscode

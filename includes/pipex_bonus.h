@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/18 14:27:21 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 11:59:50 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # define WRONG_ARGS		"Wrong main argument(-s)"
 # define OPEN_INFILE	"Attempt to open input file"
 # define CREAT_OUTFILE	"Attempt to create output file"
+# define CREAT_HEREDOC	"Attempt to create temporary file"
+# define READ_STDIN		"Attempt to read from STDIN"
 # define MAKE_TUBE		"Attempt to create a pipe"
 # define PATH_ERR		"Can`t find paths to binaries in env"
 # define NO_PATHS		"Can`t get paths to binaries"
@@ -48,7 +50,7 @@
 
 typedef struct s_pipex
 {
-	char	openedfds;
+	char	filelst;
 	int		isheredoc;
 	int		cmd_num;
 	int		infile;

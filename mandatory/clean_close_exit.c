@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:44 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/16 12:51:14 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 11:53:08 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ void	print_error(char *msg)
 
 void	clean_exit(t_pipex *pipex, char *msg)
 {
+	print_error(msg);
 	close_files(pipex);
 	close_pipe(pipex);
 	clean_memory(pipex);
-	print_error(msg);
 	exit(1);
 }

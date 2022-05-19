@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/11 15:03:59 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/18 15:05:14 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 10:49:40 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,13 @@ int	get_next_line(int fd, char **line)
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		return (-1);
-	while (!ft_strchr(accum, '\n') && rd != 0)
+	while (!ft_strchr(accum, '\n') && rd > 0)
 	{
 		rd = read(fd, buf, BUFFER_SIZE);
-		if (rd == -1)
+		if (rd < 0)
 			return (error_ret(buf));
 		buf[rd] = '\0';
-		accum = ft_strjoin(accum, buf);
+		accum = ft_strjn(accum, buf);
 	}
 	free(buf);
 	*line = find_line(accum);
