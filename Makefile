@@ -57,6 +57,9 @@ bonus: clean $(B_SRC) $(GNL_SRC)
 	$(RM) $(NAME)
 	$(CC) $(CFLAGS) $(B_SRC) $(GNL_SRC) $(LIBFT) -o $(NAME)
 
+debug: $(B_SRC) $(GNL_SRC)
+	$(CC) $(B_SRC) $(GNL_SRC) $(LIBFT) -g
+
 clean:
 		@echo "$(RED)Cleaning...$(DEFAULT)"
 		@make clean -C $(LIB_DIR)
