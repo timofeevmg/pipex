@@ -1,34 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_bonus.c                                      :+:      :+:    :+:   */
+/*   clean_exit_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 12:56:22 by epilar           ###   ########.fr       */
+/*   Created: 2022/05/19 12:53:55 by epilar            #+#    #+#             */
+/*   Updated: 2022/05/19 12:54:19 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
 
-int	count_commands(int ac, t_pipex *pipex)
+void	print_error(char *msg)
 {
-	if (ac < 5 || (ac < 6 && pipex->isheredoc))
-		return (-1);
-	pipex->cmd_num = ac - 3 - pipex->isheredoc;
-	return (0);
+	int		len;
+
+	write(STDERR_FILENO, "Error: ", 7);
+	if (errno == 0)
+	{
+		len = ft_strlen(msg);
+		write(STDERR_FILENO, msg, len);
+		write(STDERR_FILENO, "\n", 1);
+	}
+	else
+		perror(msg);
 }
 
-int	main(int ac, char **av, char **env)
+void	clean_exit(t_pipex *pipex, char *msg)
 {
-	t_pipex		pipex;
+	print_error(msg);
+	if (pipex->filelst & INFD)
+		close(pipex->infile);
+	if (pipex->filelst & HDFD)
+		unlink(HEREDOC_FILE);
+	if (pipex->filelst & OUTFD)
+		close(pipex->outfile);
 
-	if (!av || !env)
-		clean_exit(&pipex, WRONG_ARGS);
-	prepare_struct(&pipex, av);
-	if (count_commands(ac, &pipex) < 0)
-		clean_exit(&pipex, WRONG_ARGS_NUM);
-	open_inoutfiles(ac, av, &pipex);
-	return (0);
+	exit(1);
 }

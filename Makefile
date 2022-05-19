@@ -22,7 +22,10 @@ M_SRC_DIR	= mandatory/
 M_SRC		= $(addprefix $(M_SRC_DIR), $(M_SRC_LIST))
 M_OBJ		= $(M_SRC:.c=.o)
 
-B_SRC_LIST	=	pipex_bonus.c
+B_SRC_LIST	=	pipex_bonus.c\
+				prepare_bonus.c\
+				heredoc_bonus.c\
+				clean_exit_bonus.c
 B_SRC_DIR	= bonus/
 B_SRC		= $(addprefix $(B_SRC_DIR), $(B_SRC_LIST))
 GNL_LIST	=	get_next_line.c\
