@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 12:55:06 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 13:17:46 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,19 @@ typedef struct s_pipex
 	int		cmd_num;
 	int		infile;
 	int		outfile;
-
+	char	**cmd_paths;
 }	t_pipex;
 
 void	open_inoutfiles(int ac, char **av, t_pipex *pipex);
 int		open_inputfile(char **av, t_pipex *pipex);
 void	create_heredoc(t_pipex *pipex, char *limiter);
-int		create_outputfile(char *path);
+int		create_outputfile(char *path, t_pipex *pipex);
 
 int		check_heredoc(char *arg);
 void	prepare_struct(t_pipex *pipex, char **av);
+
+char	**get_paths_arr(char **env);
+char	*get_pathstr_from_env(char **env);
 
 void	print_error(char *msg);
 void	clean_exit(t_pipex *pipex, char *msg);
@@ -73,16 +76,11 @@ void	clean_exit(t_pipex *pipex, char *msg);
 
 // void	check_arguments(int ac, char **av, char **env);
 
-// char	**get_paths_arr(char **env);
-// char	*get_pathstr_from_env(char **env);
-
 // void	child_proc1(t_pipex *pipex, char **av, char **env);
 // void	child_proc2(t_pipex *pipex, char **av, char **env);
 
-// void	clean_exit(t_pipex *pipex, char *msg);
 // void	clean_memory(t_pipex *pipex);
 // void	close_pipe(t_pipex *pipex);
 // void	close_files(t_pipex *pipex);
-// void	print_error(char *msg);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 12:43:41 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 13:00:42 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 13:14:04 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	prepare_struct(t_pipex *pipex, char **av)
 {
 	pipex->filelst = NOFDS;
 	pipex->isheredoc = check_heredoc(av[1]);
+	pipex->cmd_paths = NULL;
 }
 
 int	open_inputfile(char **av, t_pipex *pipex)
@@ -52,7 +53,7 @@ int	open_inputfile(char **av, t_pipex *pipex)
 	return (fd);
 }
 
-int	create_outputfile(char *path)
+int	create_outputfile(char *path, t_pipex *pipex)
 {
 	int	ret;
 	int	fd;
@@ -64,7 +65,10 @@ int	create_outputfile(char *path)
 		if (ret < 0)
 			return (ret);
 	}
-	fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (pipex->isheredoc)
+		fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	else
+		fd = open(path, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	return (fd);
 }
 
@@ -73,7 +77,7 @@ void	open_inoutfiles(int ac, char **av, t_pipex *pipex)
 	pipex->infile = open_inputfile(av, pipex);
 	if (pipex->infile < 0)
 		clean_exit(pipex, OPEN_INFILE);
-	pipex->outfile = create_outputfile(av[ac - 1]);
+	pipex->outfile = create_outputfile(av[ac - 1], pipex);
 	if (pipex->outfile < 0)
 		clean_exit(pipex, CREAT_OUTFILE);
 	pipex->filelst = NOFDS | INFD | OUTFD;

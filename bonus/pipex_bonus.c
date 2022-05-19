@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 12:56:22 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/19 13:20:22 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,8 @@ int	main(int ac, char **av, char **env)
 	if (count_commands(ac, &pipex) < 0)
 		clean_exit(&pipex, WRONG_ARGS_NUM);
 	open_inoutfiles(ac, av, &pipex);
+	pipex.cmd_paths = get_paths_arr(env);
+	if (!pipex.cmd_paths)
+		clean_exit(&pipex, NO_PATHS);
 	return (0);
 }
