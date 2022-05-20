@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 13:17:46 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/20 15:02:28 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,16 @@ typedef struct s_pipex
 {
 	char	filelst;
 	int		isheredoc;
-	int		cmd_num;
 	int		infile;
 	int		outfile;
 	char	**cmd_paths;
+	int		cmd_num;
+	int		cmd_id;
+	int		pipe_num;
+	int		**pipe_fds;
+	pid_t	pid;
 }	t_pipex;
+
 
 void	open_inoutfiles(int ac, char **av, t_pipex *pipex);
 int		open_inputfile(char **av, t_pipex *pipex);
