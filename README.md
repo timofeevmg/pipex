@@ -27,3 +27,8 @@ libft
   < input cat -e | cat -e > output
 
 echo $?
+
+/* BONUS */
+````
+cat << ALL | cat -e | wc -l >> output
+````
