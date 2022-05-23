@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/23 14:51:52 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/23 15:10:33 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,28 @@ char	*find_cmd(char **paths, char *cmd)
 	return (NULL);
 }
 
+void	init_pipes(t_pipex *pipex)
+{
+	int	i;
+
+	if (pipex)
+		{
+		pipex->pipe_fds = (int **)malloc(sizeof(int *) * pipex->pipe_num);
+		if (!pipex->pipe_fds)
+			clean_exit(pipex, MALLOC_FAIL);
+		i = 0;
+		while (i < pipex->pipe_num)
+		{
+			pipex->pipe_fds[i] = (int *)malloc(sizeof(int) * 2);
+			if (!pipex->pipe_fds[i])
+				clean_exit(pipex, MALLOC_FAIL);
+			if (pipe(pipex->pipe_fds[i]) < 0)
+				clean_exit(pipex, MAKE_TUBE);
+			i++;
+		}
+	}
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_pipex		pipex;
@@ -56,18 +78,8 @@ int	main(int ac, char **av, char **env)
 	pipex.cmd_paths = get_paths_arr(env);
 	if (!pipex.cmd_paths)
 		clean_exit(&pipex, NO_PATHS);
+	init_pipes(&pipex);
 //////////////////////////////////////////////////////
-
-/* init pipe_fds array */
-	pipex.pipe_fds = (int **)malloc(sizeof(int *) * pipex.pipe_num);
-	int i = 0;
-	while (i < pipex.pipe_num)
-	{
-		pipex.pipe_fds[i] = (int *)malloc(sizeof(int) * 2);
-		pipe(pipex.pipe_fds[i]);
-		i++;
-	}
-/**********************/
 
 	pipex.cmd_id = 0;
 	while(pipex.cmd_id < pipex.cmd_num)

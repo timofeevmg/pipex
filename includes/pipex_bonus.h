@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/23 10:13:47 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/23 15:06:11 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@
 # define CMD_AV_F		"Attempt to get command arguments"
 # define CMD_PLACE		"Attemp to find command location"
 # define EXE_CMD		"Attemp to execute command"
+# define MALLOC_FAIL	"Attemp to allocate memory"
 
 # define HEREDOC_FILE	".here_doc"
 
