@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/20 15:39:06 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/23 14:51:52 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,43 +77,45 @@ int	main(int ac, char **av, char **env)
 		{
 			if (pipex.cmd_id == 0)
 			{
-				dup2(pipex.infile, 0);
 				dup2(pipex.pipe_fds[0][1], 1);
+				dup2(pipex.infile, 0);
 			}
 			else if (pipex.cmd_id == pipex.cmd_num - 1)
 			{
-				dup2(pipex.outfile, 1);
 				dup2(pipex.pipe_fds[pipex.pipe_num - 1][0], 0);
+				dup2(pipex.outfile, 1);
 			}
 			else
-				dup2(pipex.pipe_fds[pipex.cmd_id][0], 0);
+			{
+				dup2(pipex.pipe_fds[pipex.cmd_id - 1][0], 0);
 				dup2(pipex.pipe_fds[pipex.cmd_id][1], 1);
+			}
+			
+			int	n = 0;
+			while (n < pipex.pipe_num)
+			{
+				close(pipex.pipe_fds[n][0]);
+				close(pipex.pipe_fds[n][1]);
+				n++;
+			}
+
+			pipex.cmd_args = ft_split(av[pipex.cmd_id + 2 + pipex.isheredoc], ' ');
+			pipex.cmd_place = find_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
+			execve(pipex.cmd_place, pipex.cmd_args, env);
 		}
 		pipex.cmd_id++;
 	}
 
-	// char	**cmd_args;
-	// char	*cmd_place;
-	// int		i;
-	// int		in;
-	// int		fd[2];
+	int	m = 0;
+	while (m < pipex.pipe_num)
+	{
+		close(pipex.pipe_fds[m][0]);
+		close(pipex.pipe_fds[m][1]);
+		m++;
+	}
+	waitpid(-1, NULL, 0);
 
-	// in = 0;
-	// i = 0;
-	// while (i < pipex.cmd_num - 2)
-	// {
-	// 	pipe(fd);
-	// 	spawn_proc(in, fd[1], av[i + 2 + pipex.isheredoc], env, &pipex);
-	// 	close(fd[1]);
-	// 	in = fd[0];
-	// 	i++;
-	// }
-	// if (in != 0)
-	// 	dup2(in, 0);
-	// cmd_args = ft_split(av[i + 2 + pipex.isheredoc], ' ');
-	// cmd_place = find_cmd(pipex.cmd_paths, cmd_args[0]);
-	// execve(cmd_place, cmd_args, env);
-	// waitpid(-1, NULL, 0);
+
 	
 
 	return (0);

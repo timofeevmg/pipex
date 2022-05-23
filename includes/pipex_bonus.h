@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/20 15:02:28 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/23 10:13:47 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ typedef struct s_pipex
 	int		infile;
 	int		outfile;
 	char	**cmd_paths;
+	char	**cmd_args;
+	char	*cmd_place;
 	int		cmd_num;
 	int		cmd_id;
 	int		pipe_num;
