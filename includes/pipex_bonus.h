@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:41:15 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/23 15:06:11 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 10:44:36 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_pipex
 	int		cmd_num;
 	int		cmd_id;
 	int		pipe_num;
+	int		pipe_id;
 	int		**pipe_fds;
 	pid_t	pid;
 }	t_pipex;
@@ -70,15 +71,20 @@ void	open_inoutfiles(int ac, char **av, t_pipex *pipex);
 int		open_inputfile(char **av, t_pipex *pipex);
 void	create_heredoc(t_pipex *pipex, char *limiter);
 int		create_outputfile(char *path, t_pipex *pipex);
+void	init_pipes(t_pipex *pipex);
 
 int		check_heredoc(char *arg);
 void	prepare_struct(t_pipex *pipex, char **av);
 
 char	**get_paths_arr(char **env);
 char	*get_pathstr_from_env(char **env);
+char	*find_cmd(char **paths, char *cmd);
 
 void	print_error(char *msg);
 void	clean_exit(t_pipex *pipex, char *msg);
+void	close_files(t_pipex *pipex);
+void	close_pipes(t_pipex *pipex);
+void	clean_memory(t_pipex *pipex);
 
 
 

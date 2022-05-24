@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/23 15:10:33 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 10:43:36 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,47 +21,50 @@ int	count_commands(int ac, t_pipex *pipex)
 	return (0);
 }
 
-char	*find_cmd(char **paths, char *cmd)
+int	dup_fds(t_pipex *pipex)
 {
-	char	*tmp;
-	char	*try;
-
-	while (*paths)
+	if (pipex->cmd_id == 0)
 	{
-		tmp = ft_strjoin(*paths, "/");
-		if (!tmp)
-			return (NULL);
-		try = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (!try)
-			return (NULL);
-		if (access(try, F_OK | X_OK) == 0)
-			return (try);
-		free(try);
-		paths++;
+		if (dup2(pipex->pipe_fds[0][1], 1) < 0)
+			return (-1);
+		if (dup2(pipex->infile, 0) < 0)
+			return (-1);
 	}
-	return (NULL);
+	else if (pipex->cmd_id == pipex->cmd_num - 1)
+	{
+		if (dup2(pipex->pipe_fds[pipex->pipe_num - 1][0], 0) < 0)
+			return (-1);
+		if (dup2(pipex->outfile, 1) < 0)
+			return (-1);
+	}
+	else
+	{
+		if (dup2(pipex->pipe_fds[pipex->cmd_id - 1][0], 0) < 0)
+			return (-1);
+		if (dup2(pipex->pipe_fds[pipex->cmd_id][1], 1) < 0)
+			return (-1);
+	}
+	return (0);
 }
 
-void	init_pipes(t_pipex *pipex)
+void	do_pipe(t_pipex *pipex, char **av, char **env)
 {
-	int	i;
-
-	if (pipex)
+	while(pipex->cmd_id < pipex->cmd_num)
+	{
+		pipex->pid = fork();
+		if (pipex->pid < 0)
+			clean_exit(pipex, FORK_FAIL);
+		if (pipex->pid == 0)
 		{
-		pipex->pipe_fds = (int **)malloc(sizeof(int *) * pipex->pipe_num);
-		if (!pipex->pipe_fds)
-			clean_exit(pipex, MALLOC_FAIL);
-		i = 0;
-		while (i < pipex->pipe_num)
-		{
-			pipex->pipe_fds[i] = (int *)malloc(sizeof(int) * 2);
-			if (!pipex->pipe_fds[i])
-				clean_exit(pipex, MALLOC_FAIL);
-			if (pipe(pipex->pipe_fds[i]) < 0)
-				clean_exit(pipex, MAKE_TUBE);
-			i++;
+			if (dup_fds(pipex) < 0)
+				clean_exit(pipex, DUP_FAIL);
+			close_pipes(pipex);
+			pipex->cmd_args = ft_split(av[pipex->cmd_id + 2 + pipex->isheredoc], ' ');
+			pipex->cmd_place = find_cmd(pipex->cmd_paths, pipex->cmd_args[0]);
+			if (execve(pipex->cmd_place, pipex->cmd_args, env) < 0)
+				clean_exit(pipex, EXE_CMD);
 		}
+		pipex->cmd_id++;
 	}
 }
 
@@ -79,56 +82,10 @@ int	main(int ac, char **av, char **env)
 	if (!pipex.cmd_paths)
 		clean_exit(&pipex, NO_PATHS);
 	init_pipes(&pipex);
-//////////////////////////////////////////////////////
-
-	pipex.cmd_id = 0;
-	while(pipex.cmd_id < pipex.cmd_num)
-	{
-		pipex.pid = fork();
-		if (pipex.pid == 0)
-		{
-			if (pipex.cmd_id == 0)
-			{
-				dup2(pipex.pipe_fds[0][1], 1);
-				dup2(pipex.infile, 0);
-			}
-			else if (pipex.cmd_id == pipex.cmd_num - 1)
-			{
-				dup2(pipex.pipe_fds[pipex.pipe_num - 1][0], 0);
-				dup2(pipex.outfile, 1);
-			}
-			else
-			{
-				dup2(pipex.pipe_fds[pipex.cmd_id - 1][0], 0);
-				dup2(pipex.pipe_fds[pipex.cmd_id][1], 1);
-			}
-			
-			int	n = 0;
-			while (n < pipex.pipe_num)
-			{
-				close(pipex.pipe_fds[n][0]);
-				close(pipex.pipe_fds[n][1]);
-				n++;
-			}
-
-			pipex.cmd_args = ft_split(av[pipex.cmd_id + 2 + pipex.isheredoc], ' ');
-			pipex.cmd_place = find_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
-			execve(pipex.cmd_place, pipex.cmd_args, env);
-		}
-		pipex.cmd_id++;
-	}
-
-	int	m = 0;
-	while (m < pipex.pipe_num)
-	{
-		close(pipex.pipe_fds[m][0]);
-		close(pipex.pipe_fds[m][1]);
-		m++;
-	}
+	do_pipe(&pipex, av, env);
+	close_pipes(&pipex);
 	waitpid(-1, NULL, 0);
-
-
-	
-
+	close_files(&pipex);
+	clean_memory(&pipex);
 	return (0);
 }

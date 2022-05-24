@@ -6,11 +6,18 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 12:48:02 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/19 12:49:48 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 10:42:00 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
+
+int	check_heredoc(char *arg)
+{
+	if (arg && ft_strncmp("here_doc", arg, 9) == 0)
+		return (1);
+	return (0);
+}
 
 void	create_heredoc(t_pipex *pipex, char *limiter)
 {
