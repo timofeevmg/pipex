@@ -34,3 +34,6 @@ cat << ALL | cat -e | wc -l >> output
 ````
 
 - ./pipex here_doc ALL "cat -e" "cat -e" "cat -e" ... output
+````
+cat << ALL | cat -e | cat -e | ... >> output
+````
