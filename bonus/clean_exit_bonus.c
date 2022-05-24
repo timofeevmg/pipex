@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 12:53:55 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/24 10:40:47 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 11:03:37 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	close_files(t_pipex *pipex)
 void	clean_memory(t_pipex *pipex)
 {
 	int	i;
-	
+
 	if (pipex->cmd_paths)
 	{
 		i = 0;
@@ -81,7 +81,7 @@ void	clean_exit(t_pipex *pipex, char *msg)
 		if (pipex->pipe_fds)
 		{
 			i = 0;
-			while(pipex->pipe_fds[i])
+			while (pipex->pipe_fds[i])
 			{
 				if (i < pipex->pipe_id)
 				{

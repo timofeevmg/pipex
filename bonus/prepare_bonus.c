@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 12:43:41 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/24 10:58:24 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 11:04:35 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	open_inoutfiles(int ac, char **av, t_pipex *pipex)
 void	init_pipes(t_pipex *pipex)
 {
 	if (pipex)
-		{
+	{
 		pipex->pipe_fds = (int **)malloc(sizeof(int *) * pipex->pipe_num);
 		if (!pipex->pipe_fds)
 			clean_exit(pipex, MALLOC_FAIL);

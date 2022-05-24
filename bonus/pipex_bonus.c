@@ -6,7 +6,7 @@
 /*   By: epilar <epilar@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 09:45:19 by epilar            #+#    #+#             */
-/*   Updated: 2022/05/24 10:43:36 by epilar           ###   ########.fr       */
+/*   Updated: 2022/05/24 11:05:20 by epilar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	dup_fds(t_pipex *pipex)
 
 void	do_pipe(t_pipex *pipex, char **av, char **env)
 {
-	while(pipex->cmd_id < pipex->cmd_num)
+	while (pipex->cmd_id < pipex->cmd_num)
 	{
 		pipex->pid = fork();
 		if (pipex->pid < 0)
@@ -59,7 +59,8 @@ void	do_pipe(t_pipex *pipex, char **av, char **env)
 			if (dup_fds(pipex) < 0)
 				clean_exit(pipex, DUP_FAIL);
 			close_pipes(pipex);
-			pipex->cmd_args = ft_split(av[pipex->cmd_id + 2 + pipex->isheredoc], ' ');
+			pipex->cmd_args = \
+			ft_split(av[pipex->cmd_id + 2 + pipex->isheredoc], ' ');
 			pipex->cmd_place = find_cmd(pipex->cmd_paths, pipex->cmd_args[0]);
 			if (execve(pipex->cmd_place, pipex->cmd_args, env) < 0)
 				clean_exit(pipex, EXE_CMD);
