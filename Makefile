@@ -22,6 +22,9 @@ M_SRC_DIR	= mandatory/
 M_SRC		= $(addprefix $(M_SRC_DIR), $(M_SRC_LIST))
 M_OBJ		= $(M_SRC:.c=.o)
 
+B_HDR_LIST	= pipex_bonus.h
+B_HDR		= $(addprefix $(HDR_DIR), $(B_HDR_LIST))
+
 B_SRC_LIST	=	pipex_bonus.c\
 				prepare_bonus.c\
 				heredoc_bonus.c\
@@ -29,10 +32,12 @@ B_SRC_LIST	=	pipex_bonus.c\
 				clean_exit_bonus.c
 B_SRC_DIR	= bonus/
 B_SRC		= $(addprefix $(B_SRC_DIR), $(B_SRC_LIST))
+B_OBJ		= $(B_SRC:.c=.o)
 GNL_LIST	=	get_next_line.c\
 				get_next_line_utils.c
 GNL_DIR		= bonus/gnl/
 GNL_SRC		= $(addprefix $(GNL_DIR), $(GNL_LIST))
+GNL_OBJ		= $(GNL_SRC:.c=.o)
 
 
 
@@ -53,17 +58,19 @@ $(LIBFT):
 		@make clean -C $(LIB_DIR)
 		@echo "$(GREEN)Done.$(DEFAULT)"
 
-bonus: clean $(B_SRC) $(GNL_SRC)
-	$(RM) $(NAME)
-	$(CC) $(CFLAGS) $(B_SRC) $(GNL_SRC) $(LIBFT) -o $(NAME)
+bonus: $(B_OBJ) $(GNL_OBJ) $(M_HDR = $(B_HDR))
+		$(RM) $(NAME)
+		$(CC) $(CFLAGS) $^ $(LIBFT) -o $(NAME)
 
 debug: $(B_SRC) $(GNL_SRC)
-	$(CC) $(B_SRC) $(GNL_SRC) $(LIBFT) -g
+		$(CC) $(B_SRC) $(GNL_SRC) $(LIBFT) -g
 
 clean:
 		@echo "$(RED)Cleaning...$(DEFAULT)"
 		@make clean -C $(LIB_DIR)
 		$(RM) $(M_OBJ)
+		$(RM) $(GNL_OBJ)
+		$(RM) $(B_OBJ)
 		@echo "$(GREEN)Done.$(DEFAULT)"
 
 
